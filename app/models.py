@@ -36,8 +36,8 @@ class Computer(db.Model):
     disk = Column(String(125))
     monitor = Column(String(50))
     user_id = Column(Integer, ForeignKey('user.id'))
-    # ass_type = Column(Integer, ForeignKey("asstype.id"))
-    # ass_status = Column(Integer, ForeignKey("assstatus.id"))
+    type_id = Column(Integer, ForeignKey("astype.id"))
+    status_id = Column(Integer, ForeignKey("status.id"))
 
     def to_dict(self):
         return {
@@ -53,15 +53,25 @@ class Computer(db.Model):
         }
 
 
-# class Asstype(db.Model):
-#     id = Column(Integer, primary_key=True)
-#     astype = Column(String(20))
-#
-#
-# class Assstatus(db.Model):
-#     id = Column(Integer, primary_key=True)
-#     assstatus = Column(String(20))
+class Astype(db.Model):
+    id = Column(Integer, primary_key=True)
+    astype = Column(String(20), unique=True)
+    computers = relationship('Computer', backref="astype")
+
+    def __repr__(self):
+        return "{}".format(self.astype)
+
+
+class Status(db.Model):
+    id = Column(Integer, primary_key=True)
+    status = Column(String(20), unique=True)
+    computers = relationship('Computer', backref="status")
+
+    def __repr__(self):
+        return "{}".format(self.status)
 
 
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Computer, db.session))
+admin.add_view(ModelView(Astype, db.session))
+admin.add_view(ModelView(Status, db.session))
